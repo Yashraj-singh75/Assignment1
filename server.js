@@ -36,7 +36,7 @@ app.post("/register", async (req, res) =>
   try {
     const registerSchema = joi.object({
       name: joi.string().min(2).max(30).required(),
-      email: joi.string().min(11).max(30).email().required(),
+      email: joi.string().min(12).max(30).email().required(),
       password: joi.string().min(8).max(200).required(),
     });
     const { error } = registerSchema.validate({ name, email, password });
