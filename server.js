@@ -27,46 +27,55 @@ mongoose
 
 // =========================== Register Api =========================== 
 
-app.post("/register", async (req, res) => 
-  {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
-    return res.json({ message: "All fields are required" });
-  }
-  try {
-    const registerSchema = joi.object({
-      name: joi.string().min(2).max(30).required(),
-      email: joi.string().min(11).max(30).email().required(),
-      password: joi.string().min(8).max(200).required(),
-    });
-    const { error } = registerSchema.validate({ name, email, password });
+app.post("/register", async (req, res) => {
+    try {
+        const registerSchema = joi.object({
+            name: joi.string().min(2).max(30).required(),
+            email: joi.string().email().required(),
+            password: joi.string().min(8).required(),
+        });
 
-    if (error) {
-      return res.status(400).json({
-        message: error.details[0].message,
-      });
+        const { error } = registerSchema.validate(req.body);
+
+        if (error) {
+            return res.status(400).json({
+                message: error.details[0].message,
+            });
+        }
+
+        const { name, email, password } = req.body;
+
+        let user = await userModel.findOne({ email });
+
+        if (user) {
+            return res.status(409).json({
+                message: "User already exists with this email",
+            });
+        }
+
+        const hashPassword = await bcrypt.hash(password, 10);
+
+        user = await userModel.create({
+            name,
+            email,
+            password: hashPassword,
+        });
+
+        return res.status(201).json({
+            message: "User registered successfully",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+            },
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            message: "Internal Server Error",
+        });
     }
-
-    let user = await userModel.findOne({ email });
-    if (user) {
-      return res
-        .status(409)
-        .json({ message: "User already exist with this email" });
-    }
-    let hashPassword = await bcrypt.hash(password, 10);
-
-    user = await userModel.create({
-      name,
-      email,
-      password: hashPassword,
-    });
-    return res
-      .status(201)
-      .json({ message: "User successfully registered", user });
-  } 
-  catch (error) {
-    return res.status(500).json({ message: "can't registered User", error });
-  }
 });
 
 
