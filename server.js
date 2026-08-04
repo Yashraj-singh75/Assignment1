@@ -20,7 +20,7 @@ mongoose
   .connect(url)
   .then(() => console.log("Mongo DB Connected"))
   .catch((err) => {
-    console.log("Database Error ");
+    console.log("Database not connected ");
     console.log(err);
   });
 
