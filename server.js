@@ -3,18 +3,20 @@ dns.setServers(["8.8.8.8", "8.8.4.4"]);
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const { userModel, productModel } = require("./userModel");
+const { userModel, productModel } = require("./src/model/userModel");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const joi = require("joi");
 const secret = process.env.secret;
 const cookieParser = require("cookie-parser");
-const checkToken = require("./middleware");
+const checkToken = require("./src/midlewares/middleware");
 app.use(cookieParser());
 app.use(express.json());
 const PORT = 5000;
 const url = "mongodb+srv://singhyash12356_db_user:mongodb@cluster0.nhl9mh2.mongodb.net/db?appName=Cluster0";
+
+app.use("/auth", authRouter);
 
 mongoose 
   .connect(url)
@@ -22,7 +24,7 @@ mongoose
   .catch((err) => {
     console.log("Database not connected ");
     console.log(err);
-  });
+});
 
 
 // =========================== Register Api =========================== 
