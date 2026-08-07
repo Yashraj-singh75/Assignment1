@@ -3,7 +3,7 @@ dns.setServers(["8.8.8.8", "8.8.4.4"]);
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const { userModel, productModel } = require("./model/userModel");
+const userModel = require("./model/authModel");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -20,7 +20,7 @@ const productRouter = require("./routes/product.router.js");
 const connectDB = require("./config/db");
 connectDB();
 
-// app.use("/auth", authRouter);
+app.use("/auth", authRouter);
 // app.use("/product", productRouter);
 
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
