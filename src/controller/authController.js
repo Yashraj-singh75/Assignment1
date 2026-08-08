@@ -12,7 +12,9 @@ const registerUser =  async (req, res) =>
     const user = await registerUserService({
       name,
       email,
-      password});
+      password,
+      role
+    });
     return res.status(201).json({ message: "User successfully registered", user });
   }
   catch(err)

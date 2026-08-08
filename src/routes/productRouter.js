@@ -5,7 +5,7 @@ const checkToken = require('../middlewares/checktoken');
 const { productSchema, updateProductSchema } = require('../middlewares/middleware');
 
 const {
-    createproduct,
+    createProduct,
     getAllProduct,
     getProductById,
     updateProduct,
@@ -17,7 +17,7 @@ const {
 productRouter.post('/createproduct', 
     validationMiddleware(productSchema),
     checkToken,
-    createproduct
+    createProduct
 );
 
 productRouter.get('/getallproduct', getAllProduct);

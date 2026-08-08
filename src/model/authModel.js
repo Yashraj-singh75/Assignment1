@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
-const userSchema = mongoose.Schema({
+const authSchema = mongoose.Schema({
+  
   name: {
     type: String,
     minLength: 2,
@@ -8,6 +9,7 @@ const userSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
+
   email: {
     type: String,
     minLength: 11,
@@ -18,6 +20,15 @@ const userSchema = mongoose.Schema({
     unique: true,
     match: [/^\S+@\S+\.\S+$/, "Please enter a valid email"]
   },
+
+  role:{
+    type:String,
+    enum:["user", "admin", "seller"],
+    required:true,
+    trim : true,
+    default: "user"
+  },
+
   password: {
     type: String,
     minLength: 8,
@@ -25,8 +36,9 @@ const userSchema = mongoose.Schema({
     required: true,
     trim: true,
   },
+
 },{ timestamps: true } );
 
-const userModel = mongoose.model("User", userSchema);
+const authModel = mongoose.model("auth", authSchema);
 
-module.exports = userModel;
+module.exports = authModel;

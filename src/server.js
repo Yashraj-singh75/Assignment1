@@ -24,6 +24,20 @@ app.use("/auth", authRouter);
 app.use("/product", productRouter);
 
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  
 // =========================== Register Api =========================== 
 
