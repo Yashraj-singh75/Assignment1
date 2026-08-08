@@ -14,14 +14,14 @@ const checkToken = require("./middlewares/middleware.js");
 app.use(cookieParser());
 app.use(express.json());
 const PORT = 5000;
-const authRouter = require("./routes/auth.router.js");
-const productRouter = require("./routes/product.router.js");
+const authRouter = require("./routes/authRouter.js");
+const productRouter = require("./routes/productRouter.js");
 
 const connectDB = require("./config/db");
 connectDB();
 
 app.use("/auth", authRouter);
-// app.use("/product", productRouter);
+app.use("/product", productRouter);
 
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
  
