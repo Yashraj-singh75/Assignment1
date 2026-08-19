@@ -23,7 +23,9 @@ connectDB();
 
 app.use("/auth", authRouter);
 app.use("/product", productRouter); 
- 
+
+app.use("/review", reviewRoute);  
+
 const Cloudinary = require("./config/Cloudinary");
 const { error } = require("console");
 
