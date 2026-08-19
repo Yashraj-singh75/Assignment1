@@ -1,41 +1,53 @@
-const userModel = require("../model/authModel");
+const authModel = require("../model/authModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const registerUserService = async ( { 
+const registerUserService = async ({ 
   name, 
   email, 
-  password }) => {  
+  password,
+  role
+ }) => {  
 
- const userExists = await userModel.findOne({ email });
+ const userExists = await authModel.findOne({ email });
 
-if (userExists) {
-    throw new Error("User already exists");
-}
-    let hashedPassword = await bcrypt.hash(password, 10);
+  if (userExists) {
+    const error = new Error("User already exists with this email");
+    error.status = 409;
+    throw error;
+  }
 
-    const newUser = await userModel.create({
+  let hashedPassword = await bcrypt.hash(password, 10);
+
+  const newUser = await authModel.create({
       name ,
       email ,
-      password: hashedPassword 
+      password: hashedPassword ,
+      role: role || "user"
     });   
-return newUser;
+  return newUser;
 };
 
-const loginUserService = async (email, password) => {
-  let user = await userModel.findOne({ email });
-  if (!user) {
+const loginUserService = async (email, password) => 
+{ 
+  const user = await authModel.findOne({ email });
+
+  if (!user) 
+  {
    const error = new Error("Invalid email or password");
    error.status = 401;
    throw error;
   }
   const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
+  
+  if (!isMatch) 
+  {
     const error = new Error("Invalid email or password");
     error.status = 401;
     throw error;
   }
-  const token = jwt.sign({ name: user.name, email: user.email }, process.env.secret, { expiresIn: "1h" });
+  
+  const token = jwt.sign({ id: user._id, name: user.name, email: user.email, role: user.role }, process.env.secret, { expiresIn: "1h" });
   return { user, token }; 
 };
 

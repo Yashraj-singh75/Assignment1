@@ -2,21 +2,26 @@ const express = require('express');
 const productRouter = express.Router();
 const validationMiddleware = require("../middlewares/validationMiddleware");
 const checkToken = require('../middlewares/checktoken');
-const { productSchema, updateProductSchema } = require('../middlewares/middleware');
+
+const {
+    productSchema,
+    updateProductSchema
+} = require("../validationSchema/productValidation");
 
 const {
     createProduct,
     getAllProduct,
     getProductById,
-    updateProduct,
+    updateProduct, 
     deleteProduct,
 
 } = require('../controller/productController');
 
 
-productRouter.post('/createproduct', 
-    validationMiddleware(productSchema),
+productRouter.post(
+    "/createproduct",
     checkToken,
+    validationMiddleware(productSchema),
     createProduct
 );
 

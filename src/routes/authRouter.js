@@ -5,8 +5,9 @@ const checkToken = require('../middlewares/checktoken');
 const { registerUser, loginUser, logoutUser } = require('../controller/authController');
 
 const {
-    registerSchema, loginSchema 
-} = require('../middlewares/middleware');
+    registerSchema,
+    loginSchema
+} = require("../validationSchema/authValidation");
 
 
 authRouter.post('/register', validationMiddleware(registerSchema),registerUser);

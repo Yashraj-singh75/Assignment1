@@ -12,8 +12,6 @@ const authSchema = mongoose.Schema({
 
   email: {
     type: String,
-    minLength: 11,
-    maxLength: 30,
     required: true,
     trim: true,
     lowercase: true,
@@ -38,6 +36,16 @@ const authSchema = mongoose.Schema({
   },
 
 },{ timestamps: true } );
+
+// authSchema.virtual("addresses",
+// {  
+//   ref:"address",
+//   localField: "_id",
+//   foreignField:"user",
+// });
+
+// authSchema.set("toJSON", { virtuals: true });
+// authSchema.set("toObject", {virtuals: true});
 
 const authModel = mongoose.model("auth", authSchema);
 

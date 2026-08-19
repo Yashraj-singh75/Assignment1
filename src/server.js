@@ -1,9 +1,9 @@
-const dns = require("dns");
+const dns = require("dns"); 
 dns.setServers(["8.8.8.8", "8.8.4.4"]);
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const userModel = require("./model/authModel");
+const userModel = require("./model/authModel.js");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -13,16 +13,120 @@ const cookieParser = require("cookie-parser");
 const checkToken = require("./middlewares/middleware.js");
 app.use(cookieParser());
 app.use(express.json());
-const PORT = 5000;
+const PORT = process.env.PORT;
 const authRouter = require("./routes/authRouter.js");
 const productRouter = require("./routes/productRouter.js");
+const multer = require('multer');
 
-const connectDB = require("./config/db");
-connectDB();
+const connectDB = require("./config/db.js");
+connectDB(); 
 
 app.use("/auth", authRouter);
 app.use("/product", productRouter);
+ 
+const Cloudinary = require("./config/Cloudinary");
+const { error } = require("console");
 
+const diskStorage = multer.diskStorage
+(
+    {
+        destination: function (req, file, cb) 
+        {
+         cb(null, "dataupload/");
+        },
+
+        filename: function (req, file, cb) 
+        {
+            const ext = path.extreme(file.originname);
+            const unique = Date.now() + "_" +
+            Math.round(Math.random() * 1e9);
+            cb(null, unique + ext);
+        },
+    }
+);
+
+const allowed = 
+[
+    "image/jpeg",
+    "image/jpg",
+    "image/pen",
+    "image/webp",
+];
+
+
+const fileFilter = (req, file, cb) => { 
+    
+    console.log("File Name", file.originalname);
+    console.log("MIME Name", file.mimetype);
+
+    const allowed = 
+    [
+    "image/jpeg",
+    "image/jpg",
+    "image/pen",
+    "image/webp",
+    ];
+    
+    if( allowed.includes( file.mimetype ))
+    {
+        cb(null, true);
+    }
+    else
+    {
+        cb(new Error("Invalid Type" + file.mimetype));
+    }
+
+};
+
+const dataupload = multer
+(
+    {   
+        storage:diskStorage,
+        fileFilter,
+        limits: 
+        {
+            fileSize: 2 * 1024 * 1024,
+            files: 5,
+            fields: 2
+        }
+    }
+);
+
+const uploadToCloudinary = ( buffer ) => 
+{ 
+    return new Promise((resolve, reject) => 
+    {
+        cloudinary.uploader.upload_data
+        (
+            {
+                folder: "Data"
+            },
+
+            (error, errorout) => 
+            {
+                if (error) 
+                    {
+                        reject(error);
+                    }
+                else
+                    {
+                        resolve(errorout);
+                    }                                     
+            }
+        ).end(buffer);
+    })
+};
+
+
+app.post('dataupload/', dataupload.single('data'), (req, res) => 
+{  
+    console.log(req.files, "req file details");
+    // console.log(req.body, "text handler");
+
+    res.send("data upload")
+}); 
+
+ 
 app.listen(PORT, () => console.log(`Server started at port ${PORT}`));
 
 
