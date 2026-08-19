@@ -22,7 +22,7 @@ const connectDB = require("./config/db.js");
 connectDB(); 
 
 app.use("/auth", authRouter);
-app.use("/product", productRouter);
+app.use("/product", productRouter); 
  
 const Cloudinary = require("./config/Cloudinary");
 const { error } = require("console");
